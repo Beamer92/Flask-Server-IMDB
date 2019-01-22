@@ -1,0 +1,3 @@
+
+def getFunc():
+    return 'WOPWOPWOPWOPWOPWOP'
