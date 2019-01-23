@@ -1,10 +1,8 @@
-import model.hello as model
+import model.movies as model
 
-def getFunc():
-    return model.getFunc()
-    pass
+def getMovies():
+    return model.getMovies()
 
-def postFunc(data = ''):
-    print('poster')
-    return f'Post Function with {data}'
-    pass
+def create(data):
+    movieData = {}
+    return model.create(movieData)

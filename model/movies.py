@@ -1,3 +1,7 @@
 
-def getFunc():
-    return 'WOPWOPWOPWOPWOPWOP'
+
+def getMovies():
+    pass
+
+def create(data):
+    pass
