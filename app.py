@@ -1,10 +1,51 @@
 from flask import Flask, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
+import os
+import dbcon
+
 app = Flask(__name__)
 import controller.movies as movies
 import controller.actors as actors
-#note that __name__ is two underscores on each side
 
-########### MOVIES ROUTES##############
+#note that __name__ is two underscores on each side
+db=SQLAlchemy()
+
+app.config['SQLALCHEMY_DATABASE_URI'] = dbcon.DB_URL
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # silence the deprecation warning
+db.init_app(app)
+
+####### ERROR HANDLER FUNCTION#######
+class InvalidUsage(Exception):
+    status_code = 400
+
+    def __init__(self, message, status_code=None, payload=None):
+        Exception.__init__(self)
+        self.message = message
+        if status_code is not None:
+            self.status_code = status_code
+        self.payload = payload
+
+    def to_dict(self):
+        rv = dict(self.payload or ())
+        rv['message'] = self.message
+        return rv
+
+######## REGISTERING ERROR HANDLER #######
+@app.errorhandler(InvalidUsage)
+def handle_invalid_usage(error):
+    response = jsonify(error.to_dict())
+    response.status_code = error.status_code
+    return response
+
+# usage: raise InvalidUsage('This view is gone', status_code=410)
+
+@app.route('/')
+def hello(): 
+    print(dbcon.get_env_variable('POSTGRES_USER'))
+    return app.config['SQLALCHEMY_DATABASE_URI']
+
+
+########### MOVIES ROUTES ##############
 @app.route('/movies', methods=['GET', 'POST'])
 def moviesGP():
     if request.method == 'GET':
