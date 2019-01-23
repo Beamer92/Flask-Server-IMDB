@@ -1,10 +1,12 @@
 from flask import Flask, request, jsonify
 app = Flask(__name__)
 import controller.movies as movies
+import controller.actors as actors
 #note that __name__ is two underscores on each side
 
+########### MOVIES ROUTES##############
 @app.route('/movies', methods=['GET', 'POST'])
-def movies():
+def moviesGP():
     if request.method == 'GET':
         result = movies.getAll()  
         return jsonify(result)
@@ -47,17 +49,48 @@ def removeActorFromMovie(movieId):
     else:
         return {status: 400, message: "Bad PATCH Request"}
 
+######## ACTORS ROUTES##############
+@app.route('/actors', methods=['GET', 'POST'])
+def actorsGP():
+    if request.method == 'GET':
+        result = actors.getAll()  
+        return jsonify(result)
+    elif request.method == 'POST':
+        data = request.form
+        result = actors.create(data)
+        return jsonify(result)
 
+@app.route('/actors/<actorId>', methods=['GET', 'PUT', 'DELETE'])
+def actor(actorId):
+    if request.method == 'GET':
+        result = actors.getOne(actorId)
+        return jsonify(result)
+    elif request.method == 'PUT':
+        data = request.form
+        result = actors.update(actorId, data)
+        return jsonify(result)
+    elif request.method == 'DELETE':
+        result = actors.remove(actorId)
+        return jsonify(result)
 
-#actors
-# router.get('/', actorsController.getAll)
-# router.get('/:actorId', actorsController.getOne)
-# router.post('/', actorsController.create)
-# router.put('/:actorId', actorsController.update)
-# router.delete('/:actorId', actorsController.remove)
+@app.route('/actors/<actorId>/movies', methods=['GET'])
+def getMovies(actorId):
+    result = actors.getMovies(actorId)
+    return jsonify(result)
 
-# router.get('/:actorId/movies', actorsController.getAllMoviesForAnActor)
-# router.patch('/:actorId/movies/add', actorsController.addMovieToActor)
-# router.patch('/:actorId/movies/remove', actorsController.removeMovieFromActor)
+@app.route('/actors/<actorId>/movies/add', methods=['PATCH'])
+def addMovieToActor(actorId):
+    if request.form.actorId:
+        result = actors.addMovietoActor(actorId, request.form.movieId)
+        return jsonify(result)
+    else:
+        return {status: 400, message: "Bad PATCH Request"}
 
+@app.route('/actors/<actorId>/movies/remove', methods=['PATCH'])
+def removeMovieFromActor(actorId):
+    if request.form.actorId:
+        result =  actors.removeMovieFromActor(actorId, request.form.movieId)
+        return jsonify(result)
+    else:
+        return {status: 400, message: "Bad PATCH Request"}
 
