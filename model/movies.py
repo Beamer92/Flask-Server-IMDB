@@ -16,26 +16,26 @@ def create(data):
 
 def getOne(movieId):
 
-    return model.getOne(movieId)
+    return 
 
 def update(movieId, data):
 
-    return model.update(movieId, data)
+    return
 
 
 def remove(movieId):
 
-    return model.remove(movieId)
+    return
 
 
 def getActors(movieId):
 
-    return model.getActors(movieId)
+    return
 
 def addActorToMovie(movieId, actorId):
 
-    return model.addActorToMovie(movieId, actorId)
+    return 
 
 def removeActorFromMovie(movieId, actorId):
 
-    return model.removeActorFromMovie(movieId, actorId)
+    return 

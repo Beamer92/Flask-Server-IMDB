@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-import os
+from sqlalchemy import create_engine
 import dbcon
 
 app = Flask(__name__)
@@ -39,10 +39,20 @@ def handle_invalid_usage(error):
 
 # usage: raise InvalidUsage('This view is gone', status_code=410)
 
-@app.route('/')
-def hello(): 
-    print(dbcon.get_env_variable('POSTGRES_USER'))
-    return app.config['SQLALCHEMY_DATABASE_URI']
+# TESTING AREA HERE:
+# @app.route('/')
+# def hello(): 
+#     engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+#     con = engine.connect()
+#     rs = con.execute('SELECT name from actors')
+    
+#     if rs is not None:
+#         for row in rs:
+#             print(row['name'])
+#         return 'look in console'
+#     return "tried, failed"
+#     print(dbcon.get_env_variable('POSTGRES_USER'))
+#     return app.config['SQLALCHEMY_DATABASE_URI']
 
 
 ########### MOVIES ROUTES ##############
