@@ -1,18 +1,15 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 import dbcon
 
 app = Flask(__name__)
-import controller.movies as movies
-import controller.actors as actors
-
 #note that __name__ is two underscores on each side
-db=SQLAlchemy()
-
 app.config['SQLALCHEMY_DATABASE_URI'] = dbcon.DB_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # silence the deprecation warning
+db=SQLAlchemy(app)
 db.init_app(app)
+
 
 ####### ERROR HANDLER FUNCTION#######
 class InvalidUsage(Exception):
@@ -30,27 +27,18 @@ class InvalidUsage(Exception):
         rv['message'] = self.message
         return rv
 
-######## REGISTERING ERROR HANDLER #######
-@app.errorhandler(InvalidUsage)
-def handle_invalid_usage(error):
-    response = jsonify(error.to_dict())
-    response.status_code = error.status_code
-    return response
+import controller.movies as movies
+import controller.actors as actors
 
-# usage: raise InvalidUsage('This view is gone', status_code=410)
-
-# TESTING AREA HERE:
+# # TESTING AREA HERE:
 # @app.route('/')
 # def hello(): 
 #     engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
 #     con = engine.connect()
 #     rs = con.execute('SELECT name from actors')
-    
-#     if rs is not None:
-#         for row in rs:
-#             print(row['name'])
-#         return 'look in console'
-#     return "tried, failed"
+#     res = jsonify({'result': [dict(row) for row in rs]})
+#     return res
+
 #     print(dbcon.get_env_variable('POSTGRES_USER'))
 #     return app.config['SQLALCHEMY_DATABASE_URI']
 
@@ -61,6 +49,7 @@ def moviesGP():
     if request.method == 'GET':
         result = movies.getAll()  
         return jsonify(result)
+
     elif request.method == 'POST':
         data = request.form
         result = movies.create(data)
@@ -90,7 +79,7 @@ def addActorToMovie(movieId):
         result = movies.addActorToMovie(movieId, request.form.actorId)
         return jsonify(result)
     else:
-        return {status: 400, message: "Bad PATCH Request"}
+        raise InvalidUsage('Bad Patch Request', status_code=400)
 
 @app.route('/movies/<movieId>/actors/remove', methods=['PATCH'])
 def removeActorFromMovie(movieId):
@@ -98,7 +87,7 @@ def removeActorFromMovie(movieId):
         result =  movies.removeActorFromMovie(movieId, request.form.actorId)
         return jsonify(result)
     else:
-        return {status: 400, message: "Bad PATCH Request"}
+        raise InvalidUsage('Bad Patch Request', status_code=400)
 
 ######## ACTORS ROUTES##############
 @app.route('/actors', methods=['GET', 'POST'])
@@ -135,7 +124,7 @@ def addMovieToActor(actorId):
         result = actors.addMovietoActor(actorId, request.form.movieId)
         return jsonify(result)
     else:
-        return {status: 400, message: "Bad PATCH Request"}
+        raise InvalidUsage('Bad Patch Request', status_code=400)
 
 @app.route('/actors/<actorId>/movies/remove', methods=['PATCH'])
 def removeMovieFromActor(actorId):
@@ -143,5 +132,13 @@ def removeMovieFromActor(actorId):
         result =  actors.removeMovieFromActor(actorId, request.form.movieId)
         return jsonify(result)
     else:
-        return {status: 400, message: "Bad PATCH Request"}
+        raise InvalidUsage('Bad Patch Request', status_code=400)
 
+######## REGISTERING ERROR HANDLER #######
+@app.errorhandler(InvalidUsage)
+def handle_invalid_usage(error):
+    response = jsonify(error.to_dict())
+    response.status_code = error.status_code
+    return response
+
+# usage: raise InvalidUsage('This view is gone', status_code=410)

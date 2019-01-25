@@ -1,4 +1,5 @@
 import model.movies as model
+from app import InvalidUsage
 
 #knex.schema.createTable('movies', (table) => {
 #     table.increments()
@@ -17,11 +18,13 @@ def create(data):
         movieData = {}
         return model.create(movieData)
     else:
-        return "error" ##error messages still need to be looked up
+        raise InvalidUsage('POST movie is missing data')
 
 def getOne(movieId):
-
-    return model.getOne(movieId)
+    if movieId is not None:
+        return model.getOne(movieId)
+    else:
+        raise InvalidUsage('GetOne requires mMvie Id')
 
 def update(movieId, data):
 

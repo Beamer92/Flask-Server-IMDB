@@ -7,11 +7,18 @@
 #     table.string('poster_url')
 #     table.timestamps(true, true)
 
-def getMovies():
+from dbmodel import Actors, Movies, MovAct
+from app import InvalidUsage
 
-    pass
+def getAll():
+    result = Movies.query.all()
+    if result is not None:
+        return Movies.serialize_list(result)
+    else:
+        raise InvalidUsage('Error, No Movies', status_code=400)
 
 def create(data):
+
     pass
 
 def getOne(movieId):
