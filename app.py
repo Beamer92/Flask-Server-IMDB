@@ -73,23 +73,21 @@ def movie(movieId):
 @app.route('/movies/<movieId>/actors', methods=['GET'])
 def getActors(movieId):
     result = movies.getActors(movieId)
-    return jsonify(result)
+    return result
 
 @app.route('/movies/<movieId>/actors/add', methods=['PATCH'])
 def addActorToMovie(movieId):
-    if request.form.actorId:
-        result = movies.addActorToMovie(movieId, request.form.actorId)
-        return jsonify(result)
-    else:
-        raise InvalidUsage('Bad Patch Request', status_code=400)
+    data = json.loads(json.dumps(request.json))
+    result = movies.addActorToMovie(movieId,data)
+    return result
+
 
 @app.route('/movies/<movieId>/actors/remove', methods=['PATCH'])
 def removeActorFromMovie(movieId):
-    if request.form.actorId:
-        result =  movies.removeActorFromMovie(movieId, request.form.actorId)
-        return jsonify(result)
-    else:
-        raise InvalidUsage('Bad Patch Request', status_code=400)
+    data = json.loads(json.dumps(request.json))
+    result =  movies.removeActorFromMovie(movieId, data)
+    return result
+
 
 ######## ACTORS ROUTES##############
 @app.route('/actors', methods=['GET', 'POST'])

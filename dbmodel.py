@@ -1,5 +1,6 @@
 from app import db
 from sqlalchemy import inspect
+from sqlalchemy.orm import relationship
 
 class Actors(db.Model):
     __tablename__ = 'actors'
@@ -56,6 +57,10 @@ class MovAct(db.Model):
     movies_id = db.Column(db.Integer, db.ForeignKey('actors.id'), nullable=False)
     actors_id = db.Column(db.Integer, db.ForeignKey('movies.id'), nullable=False)
     role = db.Column(db.String(50), nullable=False)
+
+    # relationships are weird... idk if these are right or how to use them effectively, but I know SQL so...
+    # actors = db.relationship("Actors", primaryjoin="MovAct.actors_id.op('<<', is_comparison=True)" "(foreign(Actors.id))", viewonly=True)
+    # movies = db.relationship("Movies", primaryjoin="MovAct.movies_id.op('<<', is_comparison=True)" "(foreign(Movies.id))", viewonly=True)
 
     def __init__(self, movies_id, actors_id, role):
         self.movies_id = movies_id

@@ -36,19 +36,25 @@ def update(movieId, data):
 
 
 def remove(movieId):
-
     return model.remove(movieId)
 
 
 def getActors(movieId):
-
     return model.getActors(movieId)
 
-def addActorToMovie(movieId, actorId):
 
-    return model.addActorToMovie(movieId, actorId)
+# RIGHT HERE!!! FINISH THIS!
+def addActorToMovie(movieId, data):
+    if data.get('name'):
+            result['name'] = data['name']
+        if data.get('description'):
+            result['description'] = data['description']
+    return model.addActorToMovie(movieId, )
 
-def removeActorFromMovie(movieId, actorId):
-
-    return model.removeActorFromMovie(movieId, actorId)
+def removeActorFromMovie(movieId, data):
+    if data.get('name'):
+            result['name'] = data['name']
+        if data.get('description'):
+            result['description'] = data['description']
+    return model.removeActorFromMovie(movieId, )
 

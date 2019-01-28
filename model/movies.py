@@ -9,6 +9,8 @@
 
 from dbmodel import Actors, Movies, MovAct
 from app import InvalidUsage, db
+from sqlalchemy.sql import text
+import json
 
 def getAll():
     result = Movies.query.all()
@@ -55,13 +57,35 @@ def remove(movieId):
 
 
 def getActors(movieId):
+    sql = ('select actors.*, movies_actors.role from movies\
+     inner join movies_actors on movies.id = movies_actors.movies_id\
+     inner join actors on actors.id = movies_actors.actors_id\
+     where movies.id = %s' % movieId)
+    result = db.engine.execute(sql)
+    if result is not None:
+        return json.dumps([dict(r) for r in result], default=str)
+    else:
+        raise InvalidUsage('Error Occured', status_code=404)
 
-    return
-
-def addActorToMovie(movieId, actorId):
+def addActorToMovie(movieId, actorId, role):
 
     return 
 
-def removeActorFromMovie(movieId, actorId):
+def removeActorFromMovie(movieId, actorId, role):
 
     return 
+
+
+
+# module.exports.addActorToMovie = (movieId, { actorId, role }) =>
+#   db('movies_actors')
+#     .insert({ movies_id: movieId, actors_id: actorId, role})
+#     .returning('*')
+#     .then(([data]) => data)
+
+# module.exports.removeActorFromMovie = (movieId, { actorId, role }) => 
+#   db('movies_actors')
+#     .del()
+#     .where({movies_id: movieId, actors_id: actorId, role})
+#     .returning('*')
+#     .then(([data]) => data)
