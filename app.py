@@ -1,7 +1,8 @@
-from flask import Flask, request, jsonify, Response
+from flask import Flask, request, jsonify, Response, json
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 import dbcon
+ 
 
 app = Flask(__name__)
 #note that __name__ is two underscores on each side
@@ -15,16 +16,16 @@ db.init_app(app)
 class InvalidUsage(Exception):
     status_code = 400
 
-    def __init__(self, message, status_code=None, payload=None):
+    def __init__(self, err, status_code=None, payload=None):
         Exception.__init__(self)
-        self.message = message
+        self.err = err
         if status_code is not None:
             self.status_code = status_code
         self.payload = payload
 
     def to_dict(self):
         rv = dict(self.payload or ())
-        rv['message'] = self.message
+        rv['Error'] = self.err
         return rv
 
 import controller.movies as movies
@@ -49,9 +50,8 @@ def moviesGP():
     if request.method == 'GET':
         result = movies.getAll()  
         return jsonify(result)
-
     elif request.method == 'POST':
-        data = request.form
+        data = json.loads(json.dumps(request.json))
         result = movies.create(data)
         return jsonify(result)
 
@@ -60,10 +60,12 @@ def movie(movieId):
     if request.method == 'GET':
         result = movies.getOne(movieId)
         return jsonify(result)
+
     elif request.method == 'PUT':
-        data = request.form
+        data = json.loads(json.dumps(request.json))
         result = movies.update(movieId, data)
         return jsonify(result)
+
     elif request.method == 'DELETE':
         result = movies.remove(movieId)
         return jsonify(result)
