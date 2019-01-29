@@ -1,12 +1,3 @@
-#knex.schema.createTable('movies', (table) => {
-#     table.increments()
-#     table.string('name').notNull()
-#     table.text('description').notNull()
-#     table.timestamp('release_date').notNull()
-#     table.string('rating').notNull()
-#     table.string('poster_url')
-#     table.timestamps(true, true)
-
 from dbmodel import Actors, Movies, MovAct
 from app import InvalidUsage, db
 from sqlalchemy.sql import text
@@ -20,11 +11,11 @@ def getAll():
         raise InvalidUsage('Error, No Movies', status_code=404)
 
 def create(data):
-        movie = Movies(data['name'], data['description'], data['release_date'], data['rating'], data['poster_url'])
-        db.session.add(movie)
-        db.session.commit()
-        db.session.refresh(movie)
-        return movie.id
+    movie = Movies(data['name'], data['description'], data['release_date'], data['rating'], data['poster_url'])
+    db.session.add(movie)
+    db.session.commit()
+    db.session.refresh(movie)
+    return movie.id
     
 def getOne(movieId):
     result = Movies.query.get(movieId)
@@ -68,24 +59,20 @@ def getActors(movieId):
         raise InvalidUsage('Error Occured', status_code=404)
 
 def addActorToMovie(movieId, actorId, role):
+    try:
+        role = MovAct(movieId, actorId, role)
+        db.session.add(role)
+        db.session.commit()
+        db.session.refresh(role)
+        return role.role
+    except:
+        raise InvalidUsage('Error, PATCH failed', status_code=400)
 
-    return 
-
-def removeActorFromMovie(movieId, actorId, role):
-
-    return 
-
-
-
-# module.exports.addActorToMovie = (movieId, { actorId, role }) =>
-#   db('movies_actors')
-#     .insert({ movies_id: movieId, actors_id: actorId, role})
-#     .returning('*')
-#     .then(([data]) => data)
-
-# module.exports.removeActorFromMovie = (movieId, { actorId, role }) => 
-#   db('movies_actors')
-#     .del()
-#     .where({movies_id: movieId, actors_id: actorId, role})
-#     .returning('*')
-#     .then(([data]) => data)
+def removeActorFromMovie(movieId, actorId):
+    try:
+        movie = db.session.query(MovAct).filter(MovAct.movies_id == movieId and MoveAct.actors_id == actorId)
+        movie.delete()
+        db.session.commit()
+        return movie
+    except:
+        raise InvalidUsage('Error, PATCH REMOVE failed', status_code=400)

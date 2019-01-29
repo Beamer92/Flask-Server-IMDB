@@ -1,6 +1,6 @@
 import model.movies as model
+import model.actors as actorModel
 from app import InvalidUsage
-
 
 def getAll():
     return model.getAll()
@@ -34,27 +34,35 @@ def update(movieId, data):
 
     return model.update(movieId, result)
 
-
 def remove(movieId):
     return model.remove(movieId)
-
 
 def getActors(movieId):
     return model.getActors(movieId)
 
-
-# RIGHT HERE!!! FINISH THIS!
 def addActorToMovie(movieId, data):
-    if data.get('name'):
-            result['name'] = data['name']
-        if data.get('description'):
-            result['description'] = data['description']
-    return model.addActorToMovie(movieId, )
+    if data.get('actor_id') and data.get('role'):
+        actorId = data.get('actor_id')
+        role = data.get('role')
+        actorRes = actorModel.getOne(actorId)
+        movieRes = model.getOne(movieId)
+        if actorRes is not None and movieRes is not None:
+            return model.addActorToMovie(movieId, actorId, role)
+        else:
+            raise InvalidUsage('Error, could not find either Actor or Movie')
+    else:
+        raise InvalidUsage('Error, Actor and Role are required')
+
 
 def removeActorFromMovie(movieId, data):
-    if data.get('name'):
-            result['name'] = data['name']
-        if data.get('description'):
-            result['description'] = data['description']
-    return model.removeActorFromMovie(movieId, )
+    if data.get('actor_id'):
+        actorId = data.get('actor_id')
+        actorRes = actorModel.getOne(actorId)
+        movieRes = model.getOne(movieId)
+        if actorRes is not None and movieRes is not None:
+            return model.removeActorFromMovie(movieId, actorId)
+        else:
+            raise InvalidUsage('Error, could not find either Actor or Movie')
+    else:
+        raise InvalidUsage('Error, Actor is required')
 

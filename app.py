@@ -60,12 +60,10 @@ def movie(movieId):
     if request.method == 'GET':
         result = movies.getOne(movieId)
         return jsonify(result)
-
     elif request.method == 'PUT':
         data = json.loads(json.dumps(request.json))
         result = movies.update(movieId, data)
         return jsonify(result)
-
     elif request.method == 'DELETE':
         result = movies.remove(movieId)
         return jsonify(result)
@@ -85,7 +83,7 @@ def addActorToMovie(movieId):
 @app.route('/movies/<movieId>/actors/remove', methods=['PATCH'])
 def removeActorFromMovie(movieId):
     data = json.loads(json.dumps(request.json))
-    result =  movies.removeActorFromMovie(movieId, data)
+    result = movies.removeActorFromMovie(movieId, data)
     return result
 
 
@@ -96,7 +94,7 @@ def actorsGP():
         result = actors.getAll()  
         return jsonify(result)
     elif request.method == 'POST':
-        data = request.form
+        data = json.loads(json.dumps(request.json))
         result = actors.create(data)
         return jsonify(result)
 
@@ -106,7 +104,7 @@ def actor(actorId):
         result = actors.getOne(actorId)
         return jsonify(result)
     elif request.method == 'PUT':
-        data = request.form
+        data = json.loads(json.dumps(request.json))
         result = actors.update(actorId, data)
         return jsonify(result)
     elif request.method == 'DELETE':
@@ -116,23 +114,19 @@ def actor(actorId):
 @app.route('/actors/<actorId>/movies', methods=['GET'])
 def getMovies(actorId):
     result = actors.getMovies(actorId)
-    return jsonify(result)
+    return result
 
 @app.route('/actors/<actorId>/movies/add', methods=['PATCH'])
 def addMovieToActor(actorId):
-    if request.form.actorId:
-        result = actors.addMovietoActor(actorId, request.form.movieId)
-        return jsonify(result)
-    else:
-        raise InvalidUsage('Bad Patch Request', status_code=400)
+    data = json.loads(json.dumps(request.json))
+    result = actors.addMovietoActor(actorId, data)
+    return result
 
 @app.route('/actors/<actorId>/movies/remove', methods=['PATCH'])
 def removeMovieFromActor(actorId):
-    if request.form.actorId:
-        result =  actors.removeMovieFromActor(actorId, request.form.movieId)
-        return jsonify(result)
-    else:
-        raise InvalidUsage('Bad Patch Request', status_code=400)
+    data = json.loads(json.dumps(request.json))
+    result =  actors.removeMovieFromActor(actorId, data)
+    return result
 
 ######## REGISTERING ERROR HANDLER #######
 @app.errorhandler(InvalidUsage)
