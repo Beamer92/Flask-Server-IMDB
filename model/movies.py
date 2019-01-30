@@ -70,9 +70,8 @@ def addActorToMovie(movieId, actorId, role):
 
 def removeActorFromMovie(movieId, actorId):
     try:
-        movie = db.session.query(MovAct).filter(MovAct.movies_id == movieId and MoveAct.actors_id == actorId)
-        movie.delete()
+        movie = db.session.query(MovAct).filter(MovAct.movies_id == movieId and MoveAct.actors_id == actorId).delete()
         db.session.commit()
-        return movie
+        return 'Actor has been deleted from that movie!'
     except:
         raise InvalidUsage('Error, PATCH REMOVE failed', status_code=400)
