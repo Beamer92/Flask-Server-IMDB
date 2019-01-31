@@ -29,7 +29,7 @@ def update(actorId, data):
         result['profile_url'] = data['profile_url']
     if data.get('birth_date'):
         result['birth_date'] = data['birth_date']
-    return model.update(actorId, data)
+    return model.update(actorId, result)
 
 def remove(actorId):
     return model.remove(actorId)
@@ -39,8 +39,8 @@ def getMovies(actorId):
     return model.getMovies(actorId)
 
 def addMovietoActor(actorId, data):
-    if data.get('actor_id') and data.get('role'):
-        movieId = data.get('movie_id')
+    if data.get('movieId') and data.get('role'):
+        movieId = data.get('movieId')
         role = data.get('role')
         actorRes = model.getOne(actorId)
         movieRes = movieModel.getOne(movieId)
@@ -53,8 +53,8 @@ def addMovietoActor(actorId, data):
 
 
 def removeMovieFromActor(actorId, data):
-    if data.get('movie_id'):
-        movieId = data.get('movie_id')
+    if data.get('movieId'):
+        movieId = data.get('movieId')
         actorRes = model.getOne(actorId)
         movieRes = movieModel.getOne(movieId)
         if actorRes is not None and movieRes is not None:

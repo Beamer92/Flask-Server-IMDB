@@ -2,9 +2,11 @@ from flask import Flask, request, jsonify, Response, json
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 import dbcon
+from flask_cors import CORS
  
 
 app = Flask(__name__)
+CORS(app)
 #note that __name__ is two underscores on each side
 app.config['SQLALCHEMY_DATABASE_URI'] = dbcon.DB_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # silence the deprecation warning

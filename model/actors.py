@@ -29,11 +29,13 @@ def getOne(actorId):
 def update(actorId, data):
     try:
         db.session.query(Actors).\
-        filter(Actors.id == ActorId).\
-        update({'name': data['name'], 'biography': data['biography'], 'profile_url': data['profile_url'],'birth_date': data['birth_date']})
+        filter(Actors.id == actorId).\
+        update({'name': data['name'], 'biography': data['biography'], 
+        'profile_url': data['profile_url'],'birth_date': data['birth_date']})
+
         db.session.commit()  
         db.session.flush()
-        return 'Movie Has Been Updated!'  
+        return 'Actor Has Been Updated!'  
     except:
         raise InvalidUsage('Error, update failed', status_code=400)
 

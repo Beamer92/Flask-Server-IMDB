@@ -41,8 +41,8 @@ def getActors(movieId):
     return model.getActors(movieId)
 
 def addActorToMovie(movieId, data):
-    if data.get('actor_id') and data.get('role'):
-        actorId = data.get('actor_id')
+    if data.get('actorId') and data.get('role'):
+        actorId = data.get('actorId')
         role = data.get('role')
         actorRes = actorModel.getOne(actorId)
         movieRes = model.getOne(movieId)
@@ -55,8 +55,8 @@ def addActorToMovie(movieId, data):
 
 
 def removeActorFromMovie(movieId, data):
-    if data.get('actor_id'):
-        actorId = data.get('actor_id')
+    if data.get('actorId'):
+        actorId = data.get('actorId')
         actorRes = actorModel.getOne(actorId)
         movieRes = model.getOne(movieId)
         if actorRes is not None and movieRes is not None:

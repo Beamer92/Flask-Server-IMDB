@@ -70,8 +70,15 @@ def addActorToMovie(movieId, actorId, role):
 
 def removeActorFromMovie(movieId, actorId):
     try:
-        movie = db.session.query(MovAct).filter(MovAct.movies_id == movieId and MoveAct.actors_id == actorId).delete()
-        db.session.commit()
-        return 'Actor has been deleted from that movie!'
+        # db.session.query(MovAct).filter(MovAct.movies_id == movieId and MoveAct.actors_id == actorId).delete()
+        # db.session.commit()
+        # The above does not work and deletes all actors from that movie...
+        #  no idea why as it's the only format for multiple WHERE paramaters that doesn't throw an error
+        sql = ('delete from movies_actors where movies_actors.movies_id = %s and movies_actors.actors_id = %s' % (movieId, actorId))
+        result = db.engine.execute(sql)
+        if result is not None:
+            return 'Actor has been deleted from that movie!'
+        else:
+            raise InvalidUsage('Error Occured', status_code=404)
     except:
         raise InvalidUsage('Error, PATCH REMOVE failed', status_code=400)
